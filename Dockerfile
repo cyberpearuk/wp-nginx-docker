@@ -15,7 +15,7 @@ RUN set -ex; \
 	rm wordpress.tar.gz; \
         rm /usr/src/wordpress/wp-config-sample.php 
 
-FROM php:7.2-apache AS production
+FROM php:7.2-fpm AS production
 
 # Setup environment for WordPress and Tools (https://make.wordpress.org/hosting/handbook/handbook/server-environment/#php-extensions)
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -44,16 +44,16 @@ RUN pecl install imagick-3.4.4  \
     && docker-php-ext-enable imagick \
     # Install PECL zip >= 1.14 for zip encryption
     && pecl install zip-1.14.0  \
-    && docker-php-ext-enable zip \
-    && a2enmod rewrite expires headers      
+    && docker-php-ext-enable zip    
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        supervisor \
+        nginx \
+    && rm -rf /var/lib/apt/lists/*
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY default.conf /etc/nginx/sites-available/default
 
 # Setup php.ini settings
 COPY ini/*.ini /usr/local/etc/php/conf.d/
-
-# Copy additional apache2 config files
-COPY mods-available/* /etc/apache2/mods-available/
-COPY conf-enabled/* /etc/apache2/conf-enabled/
-COPY sites-available/* /etc/apache2/sites-available/
 
 # Copy in WordPress
 COPY --from=0 /usr/src/wordpress/ /var/www/html/
@@ -67,7 +67,7 @@ RUN curl -sS https://getcomposer.org/installer | php \
 
 ENV PATH="/root/.composer/vendor/bin:${PATH}"
 
-# Add htaccess and config
+# Add extra WP config
 COPY wordpress/*.php ./
 
 # Copy scripts
@@ -85,10 +85,11 @@ RUN mkdir /var/www/html/settings ; \
 VOLUME /var/www/html/wp-content
 VOLUME /var/www/html/settings
 
+RUN sed -i 's/;error_log = log\/php-fpm.log/error_log = \/dev\/stderr/' /usr/local/etc/php-fpm.conf
 
-RUN apachectl configtest
-ENTRYPOINT ["docker-entrypoint"]
-CMD ["apache2-foreground"]
+EXPOSE 80
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
 
 
 FROM production AS development 

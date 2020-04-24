@@ -1,6 +1,6 @@
-# Custom WordPress Docker Image
+# WordPress Nginx Docker Image
 
-Tailored docker image for running wordpress.
+Tailored docker image for running WordPress with PHP-FPM and Nginx
 
 Comes with security steps built in.
 
@@ -47,10 +47,6 @@ update the environment variables and restart (in the official WP you'd have to c
 
 To achieve this wp-config.php is also ephemeral as it uses the environment variables directly from PHP. The installation specific content
 such as the WordPress salts are put in a separate volume.
-
-### Mod Security
-
-This image has a basic setup of mod security with it's apache setup.
 
 ### Sendmail
 

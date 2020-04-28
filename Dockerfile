@@ -91,6 +91,8 @@ EXPOSE 80
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint"]
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
 
+COPY conf.d/* /etc/nginx/conf.d/
+COPY php-fpm.d/* /usr/local/etc/php-fpm.d/
 
 FROM production AS development 
 
@@ -104,6 +106,9 @@ RUN pecl install xdebug \
     && touch /var/log/xdebug.log && chmod 777 /var/log/xdebug.log \
     # TODO: permissions don't work with new volumes
     && mkdir /var/log/xdebug-profiler && chmod 777 /var/log/xdebug-profiler
+
+# XDebug Port
+EXPOSE 9000
 
 # Setup php.ini settings
 COPY dev-ini/*.ini /usr/local/etc/php/conf.d/

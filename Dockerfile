@@ -15,7 +15,7 @@ RUN set -ex; \
 	rm wordpress.tar.gz; \
         rm /usr/src/wordpress/wp-config-sample.php 
 
-FROM php:7.2-fpm AS production
+FROM php:7.3-fpm AS production
 
 # Setup environment for WordPress and Tools (https://make.wordpress.org/hosting/handbook/handbook/server-environment/#php-extensions)
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -43,7 +43,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN pecl install imagick-3.4.4  \
     && docker-php-ext-enable imagick \
     # Install PECL zip >= 1.14 for zip encryption
-    && pecl install zip-1.14.0  \
+    && pecl install zip-1.18.2  \
     && docker-php-ext-enable zip    
 RUN apt-get update && apt-get install -y --no-install-recommends \
         supervisor \

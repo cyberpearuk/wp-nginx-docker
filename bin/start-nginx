@@ -1,0 +1,18 @@
+#! /bin/bash
+
+set -e
+set -x
+
+case "$NGINX_MODE" in
+    "content-restricted")
+        # Use config which sends all requests to PHP
+        echo "Using passthru configuration"
+        ln -sf /etc/nginx/sites-available/content-restricted.conf /etc/nginx/sites-enabled/default
+    ;;
+    "normal" | *)
+        echo "Using normal configuration"
+        ln -sf /etc/nginx/sites-available/normal.conf   /etc/nginx/sites-enabled/default
+    ;;
+esac
+
+nginx -g 'daemon off;'

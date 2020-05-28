@@ -44,13 +44,17 @@ RUN pecl install imagick-3.4.4  \
     && docker-php-ext-enable imagick \
     # Install PECL zip >= 1.14 for zip encryption
     && pecl install zip-1.18.2  \
-    && docker-php-ext-enable zip    
+    && docker-php-ext-enable zip 
+
+# NGINX
+RUN apt-get update && apt-cache showpkg nginx
+ARG NGINX_VERSION=1.14.2-2+deb10u1
 RUN apt-get update && apt-get install -y --no-install-recommends \
         supervisor \
-        nginx \
+        nginx-full=${NGINX_VERSION}  \
     && rm -rf /var/lib/apt/lists/*
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY default.conf /etc/nginx/sites-available/default
+COPY nginx/sites-available/* /etc/nginx/sites-available/
 
 # Setup php.ini settings
 COPY ini/*.ini /usr/local/etc/php/conf.d/
@@ -93,6 +97,7 @@ CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
 
 COPY conf.d/* /etc/nginx/conf.d/
 COPY php-fpm.d/* /usr/local/etc/php-fpm.d/
+COPY bin/* /usr/bin/
 
 FROM production AS development 
 
@@ -112,3 +117,8 @@ EXPOSE 9000
 
 # Setup php.ini settings
 COPY dev-ini/*.ini /usr/local/etc/php/conf.d/
+
+
+
+
+RUN nginx -t

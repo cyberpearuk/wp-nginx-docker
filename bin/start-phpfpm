@@ -1,5 +1,6 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#! /bin/bash
+
+set -e
 
 echo "Setting up"
 echo ""
@@ -55,6 +56,4 @@ test -f "settings/wp-salt.php"|| {
 
 chown www-data:www-data /var/www/html/wp-content ; chmod 755 /var/www/html/wp-content
 
-
-# Execute original entrypoint from core wordpress docker image
-/usr/local/bin/docker-php-entrypoint $@
+php-fpm -F

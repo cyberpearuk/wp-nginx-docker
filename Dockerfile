@@ -1,3 +1,4 @@
+ARG BASE_IMAGE=blackpeardigital/php-nginx
 
 FROM ubuntu AS fetch-wp
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y --no-install-recommends \
@@ -15,7 +16,7 @@ RUN set -ex; \
 	rm wordpress.tar.gz; \
         rm /usr/src/wordpress/wp-config-sample.php 
 
-FROM php:7.3-fpm AS production
+FROM $BASE_IMAGE
 
 # Setup environment for WordPress and Tools (https://make.wordpress.org/hosting/handbook/handbook/server-environment/#php-extensions)
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -46,14 +47,6 @@ RUN pecl install imagick-3.4.4  \
     && pecl install zip-1.18.2  \
     && docker-php-ext-enable zip 
 
-# NGINX
-RUN apt-get update && apt-cache showpkg nginx
-ARG NGINX_VERSION=1.14.2-2+deb10u1
-RUN apt-get update && apt-get install -y --no-install-recommends \
-        supervisor \
-        nginx-full=${NGINX_VERSION}  \
-    && rm -rf /var/lib/apt/lists/*
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY nginx/sites-available/* /etc/nginx/sites-available/
 
 # Setup php.ini settings
@@ -89,36 +82,5 @@ RUN mkdir /var/www/html/settings ; \
 VOLUME /var/www/html/wp-content
 VOLUME /var/www/html/settings
 
-RUN sed -i 's/;error_log = log\/php-fpm.log/error_log = \/dev\/stderr/' /usr/local/etc/php-fpm.conf
-
-EXPOSE 80
-ENTRYPOINT ["/usr/local/bin/docker-entrypoint"]
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
-
 COPY conf.d/* /etc/nginx/conf.d/
-COPY php-fpm.d/* /usr/local/etc/php-fpm.d/
 COPY bin/* /usr/bin/
-
-FROM production AS development 
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-        nano \
-    && rm -rf /var/lib/apt/lists/*
-
-# Xdebug
-RUN pecl install xdebug \
-    && docker-php-ext-enable xdebug \
-    && touch /var/log/xdebug.log && chmod 777 /var/log/xdebug.log \
-    # TODO: permissions don't work with new volumes
-    && mkdir /var/log/xdebug-profiler && chmod 777 /var/log/xdebug-profiler
-
-# XDebug Port
-EXPOSE 9000
-
-# Setup php.ini settings
-COPY dev-ini/*.ini /usr/local/etc/php/conf.d/
-
-
-
-
-RUN nginx -t

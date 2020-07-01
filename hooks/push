@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 if [ "$DOCKER_TAG" == "latest" ] ; then 
     docker push $DOCKER_REPO:latest
     docker push $DOCKER_REPO:dev

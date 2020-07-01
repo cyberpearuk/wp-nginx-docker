@@ -32,7 +32,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         # Required for PDF Preview thumbnails
         ghostscript \
     && rm -rf /var/lib/apt/lists/* \
-    && GD_FLAGS=$(([ $PHP_VERSION == 7.4* ] && echo "--with-png=/usr --with-jpeg=/usr") || echo "--with-png-dir=/usr --with-jpeg-dir=/usr")) docker-php-ext-configure gd ${GD_FLAGS} \
+    && GD_FLAGS=$(([[ "$PHP_VERSION" == 7.4* ]] && echo "--with-png=/usr --with-jpeg=/usr") || echo "--with-png-dir=/usr --with-jpeg-dir=/usr") docker-php-ext-configure gd ${GD_FLAGS} \
     && docker-php-ext-install \
 		bcmath \
 		exif \

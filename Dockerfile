@@ -18,6 +18,8 @@ RUN set -ex; \
 
 FROM $BASE_IMAGE
 
+RUN GD_FLAGS=$(bash -c "(echo ${PHP_VERSION} | grep -Eq  ^7\.4 ) && echo '--with-png=/usr --with-jpeg=/usr' || echo '--with-png-dir=/usr --with-jpeg-dir=/usr'")
+
 # Setup environment for WordPress and Tools (https://make.wordpress.org/hosting/handbook/handbook/server-environment/#php-extensions)
 RUN apt-get update && apt-get install -y --no-install-recommends \
         libjpeg-dev \
@@ -32,7 +34,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         # Required for PDF Preview thumbnails
         ghostscript \
     && rm -rf /var/lib/apt/lists/* \
-    && GD_FLAGS=$(([[ "$PHP_VERSION" == 7.4* ]] && echo "--with-png=/usr --with-jpeg=/usr") || echo "--with-png-dir=/usr --with-jpeg-dir=/usr") docker-php-ext-configure gd ${GD_FLAGS} \
+    && GD_FLAGS=$(bash -c "(echo ${PHP_VERSION} | grep -Eq  ^7\.4 ) && echo '--with-png=/usr --with-jpeg=/usr' || echo '--with-png-dir=/usr --with-jpeg-dir=/usr'") \
+        docker-php-ext-configure gd ${GD_FLAGS} \
     && docker-php-ext-install \
 		bcmath \
 		exif \

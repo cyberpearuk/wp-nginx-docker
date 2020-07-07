@@ -70,9 +70,6 @@ ENV PATH="/root/.composer/vendor/bin:${PATH}"
 # Add extra WP config
 COPY wordpress/*.php ./
 
-# Copy scripts
-COPY scripts/* /usr/local/bin/
-
 # Setup file permissions
 RUN mkdir /var/www/html/settings ; \
     mkdir /var/www/html/wp-content/uploads ; \
@@ -86,4 +83,4 @@ VOLUME /var/www/html/wp-content
 VOLUME /var/www/html/settings
 
 COPY conf.d/* /etc/nginx/conf.d/
-COPY bin/* /usr/bin/
+COPY usr/bin/* /usr/bin/

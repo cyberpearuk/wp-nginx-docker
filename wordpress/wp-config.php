@@ -20,6 +20,11 @@ if ($_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
    $_SERVER['HTTPS']='on';
 }
 
+// Allow setting default theme
+$defaultTheme = getEnvVar('WP_DEFAULT_THEME');
+if (!empty($defaultTheme)) {
+    define('WP_DEFAULT_THEME', $defaultTheme);
+}
 define('DB_NAME', getEnvVar('WORDPRESS_DB_NAME', 'wordpress'));
 define('DB_USER', getEnvVar('WORDPRESS_DB_USER'));
 define('DB_PASSWORD', getEnvVar('WORDPRESS_DB_PASSWORD'));

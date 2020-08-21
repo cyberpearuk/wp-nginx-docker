@@ -42,11 +42,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 		opcache \
                 # Install PDO
                 pdo pdo_mysql
+# Install Imagick
 RUN pecl install imagick-3.4.4  \
     && docker-php-ext-enable imagick \
+    # Allow Imagick access to PDF for thumbnail generation
+    && sed -i -e 's$<policy domain="coder" rights="none" pattern="PDF" />$<policy domain="coder" rights="read | write" pattern="PDF" />$g' $( ls /etc/ImageMagick-*/policy.xml | head -n 1) \
     # Install PECL zip >= 1.14 for zip encryption
     && pecl install zip-1.18.2  \
     && docker-php-ext-enable zip 
+# Allow support for PDF thumbnails
 
 COPY nginx/sites-available/* /etc/nginx/sites-available/
 

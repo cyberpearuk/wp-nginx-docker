@@ -6,7 +6,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y --no-ins
         ca-certificates \
         libcurl4-openssl-dev \
     && apt-get purge -y git && apt-get -y autoremove
-ARG WP_VERSION=5.5.1
+ARG WP_VERSION=5.5.3
 # Install wordpress
 RUN set -ex; \
         WP_CHECKSUM=$(curl --silent --raw "https://en-gb.wordpress.org/wordpress-${WP_VERSION}-en_GB.tar.gz.sha1"); \

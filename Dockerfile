@@ -1,5 +1,3 @@
-ARG BASE_IMAGE=blackpeardigital/php-nginx
-
 FROM ubuntu AS fetch-wp
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y --no-install-recommends \
         curl \
@@ -16,7 +14,7 @@ RUN set -ex; \
 	rm wordpress.tar.gz; \
         rm /usr/src/wordpress/wp-config-sample.php 
 
-FROM $BASE_IMAGE
+FROM blackpeardigital/php-nginx:7.4.11
 
 # Setup environment for WordPress and Tools (https://make.wordpress.org/hosting/handbook/handbook/server-environment/#php-extensions)
 RUN apt-get update && apt-get install -y --no-install-recommends \

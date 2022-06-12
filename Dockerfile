@@ -4,7 +4,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y --no-ins
         ca-certificates \
         libcurl4-openssl-dev \
     && apt-get purge -y git && apt-get -y autoremove
-ARG WP_VERSION=5.9.1
+ARG WP_VERSION=6.0
 # Install wordpress
 RUN set -ex; \
         WP_CHECKSUM=$(curl --silent --raw "https://en-gb.wordpress.org/wordpress-${WP_VERSION}-en_GB.tar.gz.sha1"); \
@@ -38,8 +38,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 		gd \
 		mysqli \
 		opcache \
-                # Install PDO
-                pdo pdo_mysql
+        # Install PDO
+        pdo pdo_mysql
 # Install Imagick
 RUN pecl install imagick-3.4.4  \
     && docker-php-ext-enable imagick \

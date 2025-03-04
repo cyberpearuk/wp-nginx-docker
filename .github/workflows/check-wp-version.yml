@@ -12,7 +12,7 @@ jobs:
       - name: Check out repository with full history
         uses: actions/checkout@v2
         with:
-          fetch-depth: 0  # Needed to check existing tags and push new ones
+          fetch-depth: 0  # Ensure full Git history is available
 
       - name: Get Latest WordPress Version
         id: wp_version
@@ -34,11 +34,12 @@ jobs:
             echo "::set-output name=tag_exists::false"
           fi
 
-      - name: Create and Push Git Tag
+      - name: Create and Push Git Tag using PAT
         if: steps.check_tag.outputs.tag_exists == 'false'
         run: |
           TAG="${{ steps.wp_version.outputs.version }}"
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
           git tag -a "$TAG" -m "Release WordPress version $TAG"
-          git push origin "$TAG"
+          # Push the tag using a Personal Access Token (PAT) stored as PAT_TOKEN
+          git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git "$TAG"

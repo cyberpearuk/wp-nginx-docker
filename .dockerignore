@@ -6,3 +6,5 @@
 /build.sh
 /deploy.sh
 /hooks
+/local-dev.sh
+/.github/workflows

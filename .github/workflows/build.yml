@@ -1,13 +1,22 @@
 name: Build, Tag Git and Docker Image
 
 on:
+  # Trigger on new commits to the main branch
+  push:
+    branches:
+      - main
+
+  # Trigger daily at midnight UTC
   schedule:
-    - cron: '0 0 * * *'  # Runs daily at midnight UTC
-  workflow_dispatch: {}   # Allows manual trigger
+    - cron: '0 0 * * *'
+
+  # Allow manual triggers
+  workflow_dispatch: {}
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Repository with Full History
         uses: actions/checkout@v2

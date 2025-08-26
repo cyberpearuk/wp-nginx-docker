@@ -68,4 +68,4 @@ jobs:
           build-args: |
             WP_VERSION=${{ steps.wp_version.outputs.version }}
           tags: |
-            ${{ github.repository }}:${{ steps.wp_version.outputs.version }}
+            ${{ github.repository }}:8.3-${{ steps.wp_version.outputs.version }}

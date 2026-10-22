@@ -40,7 +40,7 @@ jobs:
       - name: Check if Git Tag Exists
         id: check_tag
         run: |
-          TAG="8.3-${{ steps.wp_version.outputs.version }}"
+          TAG="8.3.36-${{ steps.wp_version.outputs.version }}"
           if git rev-parse "$TAG" >/dev/null 2>&1; then
             echo "Tag $TAG already exists."
             echo "::set-output name=tag_exists::true"
@@ -52,7 +52,7 @@ jobs:
       - name: Create and Push Git Tag using PAT
         if: steps.check_tag.outputs.tag_exists == 'false'
         run: |
-          TAG="8.3-${{ steps.wp_version.outputs.version }}"
+          TAG="8.3.36-${{ steps.wp_version.outputs.version }}"
           echo "Creating and pushing Git tag: $TAG"
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
@@ -75,4 +75,4 @@ jobs:
           build-args: |
             WP_VERSION=${{ steps.wp_version.outputs.version }}
           tags: |
-            ${{ github.repository }}:8.3-${{ steps.wp_version.outputs.version }}
+            ${{ github.repository }}:8.3.36-${{ steps.wp_version.outputs.version }}

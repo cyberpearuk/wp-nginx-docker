@@ -2,9 +2,9 @@
 
 ###############################################################################
 #                            Global Build Args                                #
-#  - BASE_IMAGE: your custom PHP‐NGINX image, bumped to PHP 8.3               #
+#  - BASE_IMAGE: your custom PHP‐NGINX image, pinned to PHP 8.3.36           #
 ###############################################################################
-ARG BASE_IMAGE=blackpeardigital/php-nginx:8.3
+ARG BASE_IMAGE=blackpeardigital/php-nginx:8.3.36
 
 ###############################################################################
 # Stage 0: Fetch WordPress                                                    #

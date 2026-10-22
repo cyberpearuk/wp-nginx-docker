@@ -1,17 +1,23 @@
 name: Build, Tag Git and Docker Image
 
 on:
-  # Trigger on new commits to the main branch
+  # Trigger on new commits to the master branch
   push:
     branches:
-      - main
+      - master
 
   # Trigger daily shortly after midnight UTC
   schedule:
     - cron: '5 0 * * *'
 
   # Allow manual triggers
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Rebuild and republish the current WordPress image tag
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   build:
@@ -60,11 +66,12 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and Push Docker Image
-        if: steps.check_tag.outputs.tag_exists == 'false'
+        if: steps.check_tag.outputs.tag_exists == 'false' || inputs.force == true
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
+          pull: true
           build-args: |
             WP_VERSION=${{ steps.wp_version.outputs.version }}
           tags: |
